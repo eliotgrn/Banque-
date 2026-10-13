@@ -1,0 +1,403 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Exercices"><meta name="theme-color" content="#141B26">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png">
+</head><body><title>Banque d'exercices</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : barre fixe (retour, recherche) ; explorateur = filtres en puces + liste des exercices ; fiche = en-tête coloré par domaine, bloc vidéo, tableau des repères, consignes en listes, liens de progression */
+:root{
+  --bg:#F3F4F6; --panel:#FFFFFF; --ink:#141B26; --mute:#5E6776; --line:#DADEE4; --soft:#ECEEF2;
+  --pp:#C2410C; --ge:#1D4ED8; --de:#0F766E; --ph:#7A5A16; --jeu:#7C3AED; --acc:#141B26;
+  --ok:#15803D; --oks:#E8F6EC;
+  --ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F131A; --panel:#171D27; --ink:#E7EBF1; --mute:#9AA4B3; --line:#2A3341; --soft:#202836;
+  --pp:#F08A4B; --ge:#86A8FF; --de:#3CC7B2; --ph:#E2B85A; --jeu:#B79CF5; --acc:#E7EBF1; --ok:#5BD08A; --oks:#183326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --panel:#171D27; --ink:#E7EBF1; --mute:#9AA4B3; --line:#2A3341; --soft:#202836;
+  --pp:#F08A4B; --ge:#86A8FF; --de:#3CC7B2; --ph:#E2B85A; --jeu:#B79CF5; --acc:#E7EBF1; --ok:#5BD08A; --oks:#183326; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.45;margin:0;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+button,label.btn{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.topin{max-width:1120px;margin:0 auto;padding-block:8px;padding-inline:16px;display:flex;gap:8px;align-items:center}
+.btn{min-height:40px;border:1px solid var(--line);background:var(--panel);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:600;padding:0 12px;white-space:nowrap;text-decoration:none}
+.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;white-space:nowrap;text-decoration:none}
+.sbox{flex:1;min-width:0;position:relative}
+.sbox input{width:100%;min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:0 12px 0 34px}
+.sbox svg{position:absolute;left:10px;top:11px;width:18px;height:18px;stroke:var(--mute)}
+main{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:14px 60px}
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.08;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:21px;margin:0}
+.lead{color:var(--mute);margin:4px 0 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tab{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;text-decoration:none;display:inline-flex;align-items:center}
+.tab[aria-current=page]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow>b{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);min-width:74px}
+.chip{min-height:34px;padding:0 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:13.5px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed=true]{background:var(--cc,var(--ink));border-color:var(--cc,var(--ink));color:#fff}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
+.chip[aria-pressed=true] i{background:#fff}
+select.sel{min-height:34px;border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:0 10px;font-size:13.5px;max-width:100%}
+.count{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 8px;flex-wrap:wrap}
+.count b{font-variant-numeric:tabular-nums}
+.list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:6px 88px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px 10px 0;border-top:1px solid var(--line);text-decoration:none}
+.row:first-child{border-top:none}
+.row .bar{align-self:stretch;background:var(--dc)}
+.row .id{font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute);font-weight:600}
+.row .nm{min-width:0}
+.row .nm b{font-weight:600;display:block}
+.row .nm small{color:var(--mute);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.pill.vid{background:var(--oks);color:var(--ok)}
+.more{margin-top:10px;display:flex;justify-content:center}
+.empty{color:var(--mute);padding:16px;background:var(--panel);border:1px dashed var(--line);border-radius:12px}
+.crumb{font-size:13px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.crumb a{text-decoration:none;font-weight:600;color:var(--dc)}
+/* fiche */
+.fiche{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:10px}
+.fhead{border-top:6px solid var(--dc);padding:14px 18px 12px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-start}
+.fid{font-family:var(--display);font-size:18px;font-weight:700;color:var(--dc);letter-spacing:.03em}
+.fhead h1{font-size:32px}
+.fline{margin-top:6px;font-weight:600;color:var(--dc)}
+.facts{display:flex;gap:6px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0;border-top:1px solid var(--line)}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.cell{padding:14px 18px;border-bottom:1px solid var(--line)}
+.grid>.col+.col .cell{border-left:1px solid var(--line)}
+@media (max-width:820px){.grid>.col+.col .cell{border-left:none}}
+.lab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.lab::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--dc)}
+.txt{font-size:15.5px;line-height:1.55;max-width:70ch}
+.cell ul{margin:0;padding-left:18px}
+.cell li{margin:3px 0;line-height:1.45}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line)}
+@media (max-width:640px){.keys{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.key{padding:10px 18px;border-right:1px solid var(--line)}
+.key:last-child{border-right:none}
+.key small{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.key b{font-size:17px}
+.lv{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px}
+.lv i{width:10px;height:10px;border-radius:2px;background:var(--line)}
+.lv i.on{background:var(--dc)}
+.video{background:var(--soft);min-height:150px;width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;text-align:center;padding:16px}
+.video video,.video iframe{width:100%;height:100%;border:0;background:#000}
+.video.has{padding:0;background:#000;aspect-ratio:16/9;max-height:62vh}
+.video .ph{font-family:var(--display);font-size:22px;color:var(--mute)}
+.video code{font-size:13px;background:var(--panel);padding:2px 8px;border-radius:6px}
+.vtools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ref{color:var(--dc);font-weight:600;text-decoration:none;border-bottom:1px dotted currentColor;white-space:nowrap}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.links a{font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--bg)}
+.actbar{display:flex;gap:8px;flex-wrap:wrap}
+.star[aria-pressed=true]{color:#B7791F;border-color:#B7791F}
+.notes textarea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);resize:vertical}
+.pn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:14px}
+.pn a{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;font-size:14px}
+.pn a small{display:block;color:var(--mute);font-size:12px}
+.pn a.nx{text-align:right}
+.fam{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;display:flex;flex-direction:column;gap:2px;border-left:5px solid var(--dc)}
+.fams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.fams{grid-template-columns:minmax(0,1fr)}}
+.fam small{color:var(--mute);font-size:12.5px}
+.intro{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 18px 12px;margin-top:12px;font-size:15px}
+.intro details summary{font-weight:700;cursor:pointer;padding:8px 0}
+.intro table{border-collapse:collapse;font-size:13.5px;margin:8px 0;min-width:100%}
+.intro th,.intro td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.tw{overflow-x:auto}
+.subh{font-family:var(--display);font-size:19px;margin:18px 0 6px;color:var(--dc)}
+.modal{position:fixed;inset:0;background:rgba(10,15,25,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.box{background:var(--panel);border-radius:14px;padding:16px;max-width:520px;width:100%;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow:auto}
+.box input[type=url],.box input[type=text]{width:100%;min-height:40px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:var(--bg)}
+.msg{font-size:13.5px;color:var(--mute)}
+.sec{margin-top:20px}
+.load{padding:40px 0;color:var(--mute)}
+</style>
+
+<header class="top"><div class="topin">
+  <button class="btn" id="back" type="button" aria-label="Retour">‹</button>
+  <a class="brand" href="#">Banque</a>
+  <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Nom, identifiant (FOR-0123), matériel, mot de la fiche…" autocomplete="off" enterkeyhint="search"></div>
+</div></header>
+<main id="main"><div class="load">Chargement des 3 765 exercices…</div></main>
+<div class="modal" id="modal" hidden><div class="box" id="mbox"></div></div>
+
+<script>
+"use strict";
+const DOM = {PP:["Préparation physique","--pp"], PH:["Prépa physique hors grille","--ph"], GE:["Biomécanique du geste","--ge"], DE:["Biomécanique du déplacement","--de"], JEU:["Situations de jeu","--jeu"]};
+const LIG = {
+ PP:["Force du bas du corps","Force du haut du corps","Gainage et stabilité du tronc","Puissance des jambes : sauts et pliométrie","Puissance du haut du corps et rotation","Vitesse et accélération","Freinage, changements de direction et agilité","Endurance aérobie","Répétition d'efforts intenses","Coordination, motricité fondamentale et rythme","Équilibre et proprioception","Mobilité et souplesse"],
+ GE:["Service à plat","Service slicé","Service lifté","Coup droit lifté","Coup droit à plat","Coup droit slicé","Revers lifté","Revers à plat","Revers slicé","Volée de coup droit","Volée de revers","Smash","Amortie et touché de balle"],
+ DE:["Position d'attention","Allègement et reprise d'appuis","Démarrage et premiers pas","Déplacements latéraux","Déplacements vers l'avant et vers l'arrière","Pas d'ajustement et mise à distance","Appuis de frappe","Freinage et décélération","Changement de direction et réaccélération","Replacement","Enchaînements et liaison des actions"]};
+const NIV = ["","Découverte","Maîtrise","Avancé","Expert"];
+const MAT = [["Sans matériel",/\baucun|sans materiel|poids du corps/],["Tapis",/tapis/],["Raquette et balles",/raquette|balle/],["Plots et cibles",/plot|cible|cone|coupelle/],["Élastique",/elastique/],["Médecine-ball",/medecine|ballon leste/],["Ballon suisse",/ballon suisse/],["Lattes, échelle, cerceaux",/latte|echelle|cerceau|haie/],["Corde à sauter",/corde/],["Banc, box, step",/banc|box|step|marche|plinth/],["Barre, haltères, kettlebell",/barre|haltere|kettlebell|disque|poulie|machine|charge/],["Mur",/\bmur\b/],["Partenaire",/partenaire|binome|serveur|relanceur/],["Chrono, My Sprint, My Jump",/chrono|my sprint|my jump|ipad/]];
+const PAGE = 60;
+const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fold = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const dc = d => `var(${DOM[d][1]})`;
+
+let FAMS=[], EX=[], BY={}, FBY={}, VID={};
+/* ---------- données personnelles (appareil) ---------- */
+const ST="banque_v1";
+let P = Object.assign({fav:[], lists:[], notes:{}, links:{}, f:{dom:"",lig:"",age:"",niv:"",mat:"",vid:""}}, (()=>{ try{ return JSON.parse(localStorage.getItem(ST))||{}; }catch(e){ return {}; } })());
+const save = () => { try{ localStorage.setItem(ST, JSON.stringify(P)); }catch(e){} };
+/* vidéos importées depuis l'appareil : IndexedDB */
+const IDB = { db:null,
+  open(){ return this.db ? Promise.resolve(this.db) : new Promise((ok,ko)=>{ try{ const r=indexedDB.open("banque_videos",1); r.onupgradeneeded=()=>r.result.createObjectStore("v"); r.onsuccess=()=>{ this.db=r.result; ok(this.db); }; r.onerror=()=>ko(r.error); }catch(e){ ko(e); } }); },
+  async get(k){ const db=await this.open(); return new Promise(ok=>{ const r=db.transaction("v").objectStore("v").get(k); r.onsuccess=()=>ok(r.result); r.onerror=()=>ok(null); }); },
+  async put(k,v){ const db=await this.open(); return new Promise((ok,ko)=>{ const t=db.transaction("v","readwrite"); t.objectStore("v").put(v,k); t.oncomplete=ok; t.onerror=()=>ko(t.error); }); },
+  async del(k){ const db=await this.open(); return new Promise(ok=>{ const t=db.transaction("v","readwrite"); t.objectStore("v").delete(k); t.oncomplete=ok; }); },
+  async keys(){ try{ const db=await this.open(); return await new Promise(ok=>{ const r=db.transaction("v").objectStore("v").getAllKeys(); r.onsuccess=()=>ok(r.result); r.onerror=()=>ok([]); }); }catch(e){ return []; } } };
+let LOCALV = new Set();
+
+async function boot(){
+  try{ const d = await (await fetch("data.json")).json(); FAMS=d.fams; EX=d.ex; }
+  catch(e){ $("#main").innerHTML='<div class="empty">La banque n\'a pas pu se charger. Ouvre-la une première fois avec internet, puis recharge.</div>'; return; }
+  try{ VID = await (await fetch("videos.json",{cache:"no-store"})).json(); }catch(e){ VID={}; }
+  delete VID._mode_emploi;
+  EX.forEach((e,i)=>{ e.i=i; BY[e.id]=e; e.k = fold([e.id,e.n,e.ob,e.ma,e.de,e.co,e.er,e.ut,e.s,e.li].join(" ")); e.mk = fold(e.ma||""); });
+  FAMS.forEach(f=>FBY[f.c]=f);
+  LOCALV = new Set(await IDB.keys());
+  route();
+}
+const hasVid = id => !!(P.links[id] || VID[id] || LOCALV.has(id));
+
+/* ---------- routage ---------- */
+addEventListener("hashchange", route);
+$("#back").onclick=()=>{ if(history.length>1) history.back(); else location.hash=""; };
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1)); scrollTo(0,0);
+  if(h.startsWith("e/")) return showEx(h.slice(2));
+  if(h.startsWith("f/")) return showFam(h.slice(2));
+  if(h==="familles") return showFams();
+  if(h==="favoris") return showFav();
+  if(h.startsWith("l/")) return showList(h.slice(2));
+  if(h==="listes") return showLists();
+  if(h==="tournage") return showShoot();
+  showExplore();
+}
+function tabs(cur){ return `<nav class="tabs">${[["","Explorer"],["familles","Familles"],["favoris","Favoris"],["listes","Mes séances"],["tournage","Vidéos"]].map(([h,t])=>`<a class="tab" href="#${h}" ${cur===h?'aria-current="page"':""}>${t}</a>`).join("")}</nav>`; }
+
+/* ---------- explorer ---------- */
+let shown = PAGE;
+function filtered(){
+  const f=P.f, q=fold($("#q").value.trim()), ws=q.split(/\s+/).filter(Boolean);
+  const mat = f.mat!=="" ? MAT[+f.mat][1] : null;
+  const exact = /^[a-z]{3}-\d{4}$/.test(q) ? q.toUpperCase() : null;
+  return EX.filter(e=>{
+    if(exact) return e.id===exact;
+    if(f.dom && e.dom!==f.dom) return false;
+    if(f.lig && !e.L.includes(f.lig)) return false;
+    if(f.age && e.a > +f.age) return false;
+    if(f.niv && e.v !== +f.niv) return false;
+    if(mat && !mat.test(e.mk)) return false;
+    if(f.vid==="1" && !hasVid(e.id)) return false;
+    if(f.vid==="0" && hasVid(e.id)) return false;
+    for(const w of ws) if(!e.k.includes(w)) return false;
+    return true;
+  });
+}
+function showExplore(){
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  const f=P.f;
+  const domChips = Object.entries(DOM).map(([k,[n,c]])=>`<button class="chip" type="button" data-dom="${k}" aria-pressed="${f.dom===k}" style="--cc:var(${c})"><i></i>${n}</button>`).join("");
+  const ligOpts = ["PP","GE","DE"].map(d=>`<optgroup label="${DOM[d][0]}">${LIG[d].map((n,i)=>`<option value="${d}${i+1}">${i+1} · ${esc(n)}</option>`).join("")}</optgroup>`).join("");
+  $("#main").innerHTML = `<h1>Banque d'exercices</h1><p class="lead">${EX.length.toLocaleString("fr-FR")} exercices · une fiche par exercice · rangés selon les lignes des grilles</p>${tabs("")}
+  <div class="filters">
+    <div class="frow"><b>Domaine</b>${domChips}</div>
+    <div class="frow"><b>Ligne</b><select class="sel" id="flig"><option value="">Toutes les lignes</option>${ligOpts}</select>
+      <b style="min-width:auto;margin-left:6px">Âge</b><select class="sel" id="fage"><option value="">Tous âges</option>${Array.from({length:15},(_,i)=>`<option value="${i+4}">Accessible à ${i+4} ans</option>`).join("")}</select>
+      <b style="min-width:auto;margin-left:6px">Niveau</b><select class="sel" id="fniv"><option value="">Tous</option>${[1,2,3,4].map(n=>`<option value="${n}">${n} · ${NIV[n]}</option>`).join("")}</select></div>
+    <div class="frow"><b>Matériel</b><select class="sel" id="fmat"><option value="">Tout matériel</option>${MAT.map((m,i)=>`<option value="${i}">${m[0]}</option>`).join("")}</select>
+      <b style="min-width:auto;margin-left:6px">Vidéo</b><select class="sel" id="fvid"><option value="">Toutes</option><option value="1">Avec vidéo</option><option value="0">Sans vidéo</option></select>
+      <button class="chip" type="button" id="freset">Tout effacer</button></div>
+  </div>
+  <div class="count"><span id="cnt"></span></div><div id="res"></div>`;
+  [["flig","lig"],["fage","age"],["fniv","niv"],["fmat","mat"],["fvid","vid"]].forEach(([id,k])=>{ const s=$("#"+id); s.value=f[k]; s.onchange=()=>{ f[k]=s.value; if(k==="lig" && s.value){ const d=s.value.slice(0,2); if(f.dom && !(f.dom===d || (f.dom==="PH"&&d==="PP") || f.dom==="JEU")) f.dom=""; } save(); shown=PAGE; showExplore(); }; });
+  document.querySelectorAll("[data-dom]").forEach(b=>b.onclick=()=>{ f.dom = f.dom===b.dataset.dom ? "" : b.dataset.dom; save(); shown=PAGE; showExplore(); });
+  $("#freset").onclick=()=>{ P.f={dom:"",lig:"",age:"",niv:"",mat:"",vid:""}; $("#q").value=""; save(); shown=PAGE; showExplore(); };
+  renderRes();
+}
+function renderRes(){
+  const r = filtered();
+  const c=$("#cnt"); if(!c) return;
+  c.innerHTML = `<b>${r.length.toLocaleString("fr-FR")}</b> exercice${r.length>1?"s":""}`;
+  $("#res").innerHTML = r.length ? rowsHTML(r.slice(0,shown)) + (r.length>shown?`<div class="more"><button class="btn" id="more" type="button">Afficher ${Math.min(PAGE,r.length-shown)} de plus</button></div>`:"") : '<div class="empty">Aucun exercice ne correspond. Retire un filtre ou raccourcis la recherche.</div>';
+  const m=$("#more"); if(m) m.onclick=()=>{ shown+=PAGE; renderRes(); };
+}
+function rowsHTML(arr){
+  return `<div class="list">${arr.map(e=>`<a class="row" href="#e/${e.id}" style="--dc:${dc(e.dom)}"><span class="bar"></span><span class="id">${e.id}</span><span class="nm"><b>${esc(e.n)}</b><small>${esc(e.li||"")}</small></span><span class="meta"><span class="pill">dès ${e.a} ans</span><span class="pill">niv. ${e.v}</span>${hasVid(e.id)?'<span class="pill vid">▶ vidéo</span>':""}</span></a>`).join("")}</div>`;
+}
+let qT; $("#q").addEventListener("input",()=>{ clearTimeout(qT); qT=setTimeout(()=>{ shown=PAGE; if(location.hash && location.hash!=="#") location.hash=""; else if($("#res")) renderRes(); else showExplore(); },200); });
+$("#q").addEventListener("keydown",e=>{ if(e.key==="Enter") e.target.blur(); });
+
+/* ---------- fiche ---------- */
+function linkIds(s, self){ return esc(s).replace(/\b([A-Z]{3}-\d{4})\b/g,(m,id)=> BY[id] && id!==self ? `<a class="ref" href="#e/${id}">${id}</a>` : m).replace(/\b(5\.\d\.\d{1,2})\b/g,(m,c)=> FBY[c] ? `<a class="ref" href="#f/${c}">${esc(FBY[c].t)}</a>` : m); }
+function bullets(s, self){ const parts=String(s||"").split(/\s*;\s*/).filter(Boolean); return parts.length>1 ? `<ul>${parts.map(p=>`<li>${linkIds(cap(p.replace(/\.$/,"")),self)}</li>`).join("")}</ul>` : `<div class="txt">${linkIds(cap(String(s||"")),self)}</div>`; }
+const cap = s => s ? s[0].toUpperCase()+s.slice(1) : s;
+function showEx(id){
+  const e=BY[id]; if(!e) return showExplore();
+  const f=FBY[e.f], d=e.dom; document.documentElement.style.setProperty("--acc",dc(d));
+  const sib=EX.filter(x=>x.f===e.f), k=sib.indexOf(e), prev=sib[k-1], next=sib[k+1];
+  const fav=P.fav.includes(id);
+  const rel=[...new Set((e.ut||"").match(/\b[A-Z]{3}-\d{4}\b/g)||[])].filter(x=>BY[x]&&x!==id);
+  const m=$("#main"); m.style.setProperty("--dc",dc(d));
+  m.innerHTML = `<div class="crumb"><a href="#">Banque</a>›<a href="#f/${f.c}">${esc(f.t)}</a>›<span>${esc(e.s)}</span></div>
+  <article class="fiche">
+    <div class="fhead"><div style="min-width:0"><div class="fid">${e.id} · ${DOM[d][0]}</div><h1>${esc(e.n)}</h1><div class="fline">${esc(e.li||"")}</div></div>
+      <div class="actbar"><button class="btn star" id="fav" type="button" aria-pressed="${fav}">${fav?"★ Favori":"☆ Favori"}</button><button class="btn" id="addl" type="button">+ Séance</button></div></div>
+    <div class="video" id="vid"></div>
+    <div class="keys">
+      <div class="key"><small>Âge</small><b>dès ${e.a} ans</b></div>
+      <div class="key"><small>Niveau</small><b>${e.v} · ${NIV[e.v]}</b><span class="lv">${[1,2,3,4].map(n=>`<i class="${n<=e.v?"on":""}"></i>`).join("")}</span></div>
+      <div class="key"><small>Famille</small><b style="font-size:14.5px">${esc(e.s)}</b></div>
+      <div class="key"><small>Identifiant vidéo</small><b style="font-size:14.5px">${e.id}.mp4</b></div>
+    </div>
+    <div class="grid">
+      <div class="col">
+        <div class="cell"><div class="lab">Objectif</div><div class="txt">${linkIds(cap(e.ob||""),id)}</div></div>
+        <div class="cell"><div class="lab">Description</div><div class="txt">${linkIds(cap(e.de||""),id)}</div></div>
+        <div class="cell"><div class="lab">Matériel</div>${bullets(e.ma,id)}</div>
+      </div>
+      <div class="col">
+        <div class="cell"><div class="lab">Consignes au joueur</div>${bullets(e.co,id)}</div>
+        <div class="cell"><div class="lab">Erreurs à éviter</div>${bullets(e.er,id)}</div>
+        <div class="cell"><div class="lab">Utilisation et progression</div><div class="txt">${linkIds(cap(e.ut||""),id)}</div>${rel.length?`<div class="links">${rel.map(x=>`<a href="#e/${x}">${x} · ${esc(BY[x].n)}</a>`).join("")}</div>`:""}</div>
+      </div>
+    </div>
+    <div class="cell notes"><label class="lab" for="nt">Mes notes</label><textarea id="nt" placeholder="Variantes, joueurs, charges utilisées…"></textarea><div class="msg" id="ntm"></div></div>
+  </article>
+  <div class="pn">${prev?`<a href="#e/${prev.id}"><small>‹ ${prev.id}</small>${esc(prev.n)}</a>`:"<span></span>"}${next?`<a class="nx" href="#e/${next.id}"><small>${next.id} ›</small>${esc(next.n)}</a>`:"<span></span>"}</div>`;
+  $("#fav").onclick=()=>{ const on=!P.fav.includes(id); P.fav=on?[id,...P.fav]:P.fav.filter(x=>x!==id); save(); $("#fav").setAttribute("aria-pressed",on); $("#fav").textContent=on?"★ Favori":"☆ Favori"; };
+  $("#addl").onclick=()=>pickList(id);
+  const nt=$("#nt"); nt.value=P.notes[id]||""; let tm; nt.oninput=()=>{ clearTimeout(tm); tm=setTimeout(()=>{ if(nt.value.trim()) P.notes[id]=nt.value; else delete P.notes[id]; save(); $("#ntm").textContent="Note enregistrée sur cet appareil."; },500); };
+  renderVideo(e);
+}
+function ytId(u){ const m=String(u).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{6,})/); return m?m[1]:null; }
+async function renderVideo(e){
+  const box=$("#vid"); if(!box) return; const id=e.id;
+  let url = P.links[id] || VID[id] || "";
+  let blob = LOCALV.has(id) ? await IDB.get(id).catch(()=>null) : null;
+  if(blob){ box.className="video has"; const v=document.createElement("video"); v.controls=true; v.playsInline=true; v.preload="metadata"; v.src=URL.createObjectURL(blob); box.innerHTML=""; box.appendChild(v); addVidTools(box,e,true); return; }
+  if(url){
+    const yt=ytId(url);
+    if(yt){ box.className="video has"; box.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yt}?playsinline=1&rel=0" title="Vidéo ${id}" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>`; addVidTools(box,e,true); return; }
+    if(/\.(mp4|mov|m4v|webm)(\?|$)/i.test(url)){ box.className="video has"; box.innerHTML=`<video controls playsinline preload="metadata" src="${esc(url)}"></video>`; addVidTools(box,e,true); return; }
+    box.className="video"; box.innerHTML=`<div class="ph">Vidéo de démonstration</div><a class="btn pri" href="${esc(url)}" target="_blank" rel="noopener">▶ Ouvrir la vidéo</a>`; addVidTools(box,e,true); return;
+  }
+  box.className="video"; box.innerHTML=`<div class="ph">Vidéo de démonstration à venir</div><div class="msg">Nom du fichier à tourner : <code>${id}.mp4</code></div>`; addVidTools(box,e,false);
+}
+function addVidTools(box,e,has){
+  const t=document.createElement("div"); t.className="vtools"; if(has){ t.style.cssText="position:static;padding:8px;background:var(--panel);width:100%"; }
+  t.innerHTML=`<button class="btn" type="button" data-a="link">${has?"Changer le lien":"Ajouter un lien vidéo"}</button><label class="btn" for="vf_${e.id}">Choisir une vidéo de l'appareil</label><input id="vf_${e.id}" type="file" accept="video/*" hidden>${has&&(P.links[e.id]||LOCALV.has(e.id))?'<button class="btn" type="button" data-a="del">Retirer</button>':""}`;
+  if(has){ box.after(t); } else box.appendChild(t);
+  t.querySelector('[data-a="link"]').onclick=()=>linkModal(e);
+  const del=t.querySelector('[data-a="del"]'); if(del) del.onclick=async()=>{ delete P.links[e.id]; save(); await IDB.del(e.id).catch(()=>{}); LOCALV.delete(e.id); showEx(e.id); };
+  t.querySelector("input").onchange=async ev=>{ const file=ev.target.files[0]; if(!file) return; try{ await IDB.put(e.id,file); LOCALV.add(e.id); showEx(e.id); }catch(err){ alertBox("La vidéo n'a pas pu être enregistrée sur l'appareil (espace insuffisant ?). Utilise plutôt un lien."); } };
+}
+function modal(build){ const m=$("#modal"), b=$("#mbox"); b.innerHTML=""; build(b,()=>{ m.hidden=true; }); m.hidden=false; }
+$("#modal").addEventListener("click",e=>{ if(e.target.id==="modal") $("#modal").hidden=true; });
+function alertBox(t){ modal((b,close)=>{ b.innerHTML=`<div>${esc(t)}</div>`; const k=document.createElement("button"); k.className="btn"; k.textContent="OK"; k.onclick=close; b.appendChild(k); }); }
+function linkModal(e){
+  modal((b,close)=>{
+    b.innerHTML=`<h2>Vidéo · ${e.id}</h2><div class="msg">Colle le lien de la vidéo : YouTube (non répertoriée), lien direct .mp4, iCloud ou Google Drive.</div><input id="vl" type="url" placeholder="https://…" value="${esc(P.links[e.id]||VID[e.id]||"")}"><div class="actbar"><button class="btn pri" id="vok" type="button">Enregistrer</button><button class="btn" id="vno" type="button">Annuler</button></div>`;
+    $("#vno").onclick=close; $("#vok").onclick=()=>{ const v=$("#vl").value.trim(); if(v) P.links[e.id]=v; else delete P.links[e.id]; save(); close(); showEx(e.id); };
+  });
+}
+
+/* ---------- familles ---------- */
+function showFams(){
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  const groups={}; FAMS.forEach(f=>{ (groups[f.dossier]=groups[f.dossier]||[]).push(f); });
+  $("#main").innerHTML=`<h1>Familles d'exercices</h1><p class="lead">${FAMS.length} familles · chacune avec son mode d'emploi, sa progression et ses repères d'âge</p>${tabs("familles")}`+
+    Object.entries(groups).map(([g,fs])=>`<div class="sec"><h2>${esc(g.replace(/^\d+\.\d+\s/,""))}</h2><div class="fams" style="margin-top:8px">${fs.map(f=>`<a class="fam" href="#f/${f.c}" style="--dc:${dc(f.dom)}"><b>${esc(f.t)}</b><small>${EX.filter(e=>e.f===f.c).length} exercices · ${f.subs.length} sous-familles</small></a>`).join("")}</div></div>`).join("");
+}
+function showFam(c){
+  const f=FBY[c]; if(!f) return showFams(); document.documentElement.style.setProperty("--acc",dc(f.dom));
+  const xs=EX.filter(e=>e.f===c), subs={}; xs.forEach(e=>{ (subs[e.s]=subs[e.s]||[]).push(e); });
+  const m=$("#main"); m.style.setProperty("--dc",dc(f.dom));
+  m.innerHTML=`<div class="crumb"><a href="#familles">Familles</a>›<span>${esc(f.dossier)}</span></div><h1 style="margin-top:4px">${esc(f.t)}</h1><p class="lead">${xs.length} exercices</p>
+   <div class="intro"><details><summary>Mode d'emploi de la famille : à quoi elle sert, comment choisir, progression, repères d'âge</summary><div class="tw">${f.intro}</div></details></div>`+
+   Object.entries(subs).map(([s,arr])=>`<h3 class="subh">${esc(s)}</h3>${rowsHTML(arr)}`).join("");
+}
+
+/* ---------- favoris et séances ---------- */
+function showFav(){
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  const xs=P.fav.map(i=>BY[i]).filter(Boolean);
+  $("#main").innerHTML=`<h1>Favoris</h1><p class="lead">Touche ☆ sur une fiche pour l'ajouter ici.</p>${tabs("favoris")}<div class="sec">${xs.length?rowsHTML(xs):'<div class="empty">Aucun favori pour l\'instant.</div>'}</div>`+dataBox();
+  bindData();
+}
+function showLists(){
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  $("#main").innerHTML=`<h1>Mes séances</h1><p class="lead">Regroupe des exercices pour une séance, un joueur ou un groupe.</p>${tabs("listes")}
+   <div class="sec"><div class="actbar"><input id="ln" type="text" placeholder="Nom de la séance (ex. U12 jeudi · vitesse)" style="flex:1;min-width:200px;min-height:40px;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:var(--panel)"><button class="btn pri" id="lnew" type="button">Créer</button></div></div>
+   <div class="sec">${P.lists.length?`<div class="list">${P.lists.map(l=>`<a class="row" href="#l/${l.id}" style="--dc:var(--ink)"><span class="bar"></span><span class="id">${l.ex.length} ex.</span><span class="nm"><b>${esc(l.n)}</b><small>${l.ex.slice(0,4).map(i=>BY[i]?BY[i].n:i).map(esc).join(" · ")}</small></span><span class="meta"></span></a>`).join("")}</div>`:'<div class="empty">Aucune séance. Crée-en une ci-dessus, puis ajoute des exercices avec « + Séance » sur leur fiche.</div>'}</div>`;
+  $("#lnew").onclick=()=>{ const n=$("#ln").value.trim(); if(!n){ $("#ln").focus(); return; } P.lists.unshift({id:Date.now().toString(36), n, ex:[]}); save(); showLists(); };
+}
+function showList(lid){
+  const l=P.lists.find(x=>x.id===lid); if(!l) return showLists(); document.documentElement.style.setProperty("--acc","var(--ink)");
+  const xs=l.ex.map(i=>BY[i]).filter(Boolean);
+  $("#main").innerHTML=`<div class="crumb" style="--dc:var(--ink)"><a href="#listes">Mes séances</a></div><h1 style="margin-top:4px">${esc(l.n)}</h1><p class="lead">${xs.length} exercice${xs.length>1?"s":""}</p>
+   <div class="sec actbar"><button class="btn" id="lcopy" type="button">Copier la séance en texte</button><button class="btn" id="lren" type="button">Renommer</button><button class="btn" id="ldel" type="button">Supprimer la séance</button></div><div class="msg" id="lmsg"></div>
+   <div class="sec">${xs.length?`<div class="list">${xs.map((e,k)=>`<div class="row" style="--dc:${dc(e.dom)}"><span class="bar"></span><span class="id">${k+1}. ${e.id}</span><a class="nm" href="#e/${e.id}" style="text-decoration:none"><b>${esc(e.n)}</b><small>${esc(e.ma||"")}</small></a><span class="meta"><button class="chip" data-up="${k}" type="button" aria-label="Monter">↑</button><button class="chip" data-dn="${k}" type="button" aria-label="Descendre">↓</button><button class="chip" data-rm="${k}" type="button" aria-label="Retirer">✕</button></span></div>`).join("")}</div>`:'<div class="empty">Ajoute des exercices avec « + Séance » sur leur fiche.</div>'}</div>`;
+  document.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>{ const k=+b.dataset.up; if(k>0){ [l.ex[k-1],l.ex[k]]=[l.ex[k],l.ex[k-1]]; save(); showList(lid);} });
+  document.querySelectorAll("[data-dn]").forEach(b=>b.onclick=()=>{ const k=+b.dataset.dn; if(k<l.ex.length-1){ [l.ex[k+1],l.ex[k]]=[l.ex[k],l.ex[k+1]]; save(); showList(lid);} });
+  document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{ l.ex.splice(+b.dataset.rm,1); save(); showList(lid); });
+  $("#lcopy").onclick=async()=>{ const t=l.n+"\n\n"+xs.map((e,k)=>`${k+1}. ${e.id} · ${e.n}\n   Objectif : ${e.ob}\n   Matériel : ${e.ma}\n   Consignes : ${e.co}`).join("\n\n"); try{ await navigator.clipboard.writeText(t); $("#lmsg").textContent="Séance copiée : colle-la dans Notes ou un message."; }catch(err){ modal((b,close)=>{ b.innerHTML='<div class="msg">Sélectionne le texte puis copie-le.</div>'; const ta=document.createElement("textarea"); ta.value=t; ta.style.cssText="width:100%;min-height:260px"; b.appendChild(ta); ta.select(); const k=document.createElement("button"); k.className="btn"; k.textContent="Fermer"; k.onclick=close; b.appendChild(k); }); } };
+  $("#lren").onclick=()=>modal((b,close)=>{ b.innerHTML=`<h2>Renommer</h2><input id="rn" type="text" value="${esc(l.n)}"><div class="actbar"><button class="btn pri" id="rok" type="button">Enregistrer</button></div>`; $("#rok").onclick=()=>{ const v=$("#rn").value.trim(); if(v){ l.n=v; save(); } close(); showList(lid); }; });
+  $("#ldel").onclick=()=>{ const b=$("#ldel"); if(b.dataset.c){ P.lists=P.lists.filter(x=>x.id!==lid); save(); location.hash="listes"; } else { b.dataset.c=1; b.textContent="Confirmer la suppression"; } };
+}
+function pickList(id){
+  modal((b,close)=>{
+    b.innerHTML=`<h2>Ajouter ${id} à une séance</h2>${P.lists.map(l=>`<button class="btn" type="button" data-l="${l.id}" style="justify-content:flex-start">${esc(l.n)} · ${l.ex.length} ex.${l.ex.includes(id)?" ✓":""}</button>`).join("")}<div class="actbar"><input id="nl" type="text" placeholder="Nouvelle séance" style="flex:1"><button class="btn pri" id="nlok" type="button">Créer et ajouter</button></div>`;
+    b.querySelectorAll("[data-l]").forEach(x=>x.onclick=()=>{ const l=P.lists.find(y=>y.id===x.dataset.l); if(!l.ex.includes(id)) l.ex.push(id); save(); close(); });
+    $("#nlok").onclick=()=>{ const n=$("#nl").value.trim(); if(!n) return; P.lists.unshift({id:Date.now().toString(36), n, ex:[id]}); save(); close(); };
+  });
+}
+
+/* ---------- vidéos à tourner ---------- */
+function showShoot(){
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  const done=EX.filter(e=>hasVid(e.id)).length;
+  $("#main").innerHTML=`<h1>Vidéos de démonstration</h1><p class="lead"><b>${done}</b> exercice${done>1?"s":""} avec vidéo sur ${EX.length.toLocaleString("fr-FR")} · ${EX.length-done} à tourner</p>${tabs("tournage")}
+   <div class="sec intro" style="padding:12px 18px"><b>Comment ajouter les vidéos</b><ol style="margin:6px 0 0;padding-left:20px;line-height:1.6">
+   <li>Filme l'exercice et nomme le fichier avec son identifiant : <code>FOR-0123.mp4</code>.</li>
+   <li>Sur la fiche, touche <b>Ajouter un lien vidéo</b> (YouTube non répertoriée, iCloud, Drive…) ou <b>Choisir une vidéo de l'appareil</b> (gardée hors ligne sur cet iPad).</li>
+   <li>Pour que les vidéos soient dans l'appli pour tout le monde et sur tous tes appareils : touche <b>Sauvegarder</b> ci-dessous et envoie le fichier à Claude, qui les ajoutera à l'appli.</li></ol></div>
+   <div class="sec actbar"><a class="btn" href="#" id="fsans">Voir les exercices sans vidéo</a><button class="btn" id="copyshoot" type="button">Copier la liste de tournage</button></div><div class="msg" id="smsg"></div>`+dataBox();
+  $("#fsans").onclick=ev=>{ ev.preventDefault(); P.f.vid="0"; save(); location.hash=""; showExplore(); };
+  $("#copyshoot").onclick=async()=>{ const t=EX.filter(e=>!hasVid(e.id)).map(e=>`${e.id}.mp4\t${e.n}\t${e.ma||""}`).join("\n"); try{ await navigator.clipboard.writeText(t); $("#smsg").textContent="Liste copiée ("+t.split("\n").length+" exercices) : colle-la dans Notes ou Numbers."; }catch(err){ $("#smsg").textContent="Copie impossible dans cette vue."; } };
+  bindData();
+}
+
+/* ---------- sauvegarde ---------- */
+function dataBox(){ return `<div class="sec"><h2>Mes données</h2><div class="actbar" style="margin-top:8px"><button class="btn" id="dsave" type="button">Sauvegarder favoris, séances, notes et liens vidéo</button><label class="btn" for="drest">Restaurer</label><input id="drest" type="file" accept=".json,application/json" hidden></div><div class="msg" id="dmsg">Gardé sur cet appareil. Les vidéos choisies sur l'appareil ne sont pas incluses dans la sauvegarde.</div></div>`; }
+function bindData(){
+  $("#dsave").onclick=async()=>{ const blob=new Blob([JSON.stringify({format:"banque",version:1,date:new Date().toISOString().slice(0,10),fav:P.fav,lists:P.lists,notes:P.notes,links:P.links},null,1)],{type:"application/json"});
+    const name="Banque_exercices_"+new Date().toISOString().slice(0,10)+".json"; let dl=null; try{ dl=await window.claude?.use?.("downloads"); }catch(e){}
+    if(dl){ try{ await dl.save({filename:name,data:blob}); return; }catch(e){ if(e&&e.code==="declined") return; } }
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); };
+  $("#drest").onchange=async ev=>{ const f=ev.target.files[0]; ev.target.value=""; if(!f) return;
+    try{ const d=JSON.parse(await f.text()); if(d.format!=="banque") throw 0; P.fav=[...new Set([...(d.fav||[]),...P.fav])]; const ids=new Set(P.lists.map(l=>l.id)); (d.lists||[]).forEach(l=>{ if(!ids.has(l.id)) P.lists.push(l); }); P.notes=Object.assign({},P.notes,d.notes||{}); P.links=Object.assign({},P.links,d.links||{}); save(); $("#dmsg").textContent="Données restaurées."; }
+    catch(e){ $("#dmsg").textContent="Ce fichier n'est pas une sauvegarde de la banque (Banque_exercices_….json)."; } };
+}
+
+boot();
+</script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script></body></html>
